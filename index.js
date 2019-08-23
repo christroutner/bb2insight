@@ -14,6 +14,11 @@ const SATS_PER_BCH = 100000000
 class BB2Insight {
   constructor() {}
 
+  hello() {
+    console.log(`hello world`)
+  }
+
+  // Convert Blockbook.balance output to exactly match Insight details()
   async details(cashAddr) {
     // Get raw data from Blockbook.
     const bbData = await bchjs.Blockbook.balance(cashAddr)
@@ -49,6 +54,7 @@ class BB2Insight {
     return newData
   }
 
+  // Convert Blockbook utxo call to exactly match Insight utxo call.
   async utxo(cashAddr) {
     // Get raw data from Blockbook.
     const bbData = await bchjs.Blockbook.utxo(cashAddr)

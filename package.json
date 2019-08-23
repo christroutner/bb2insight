@@ -4,7 +4,8 @@
   "description": "A shim library that converts Blockbook data to Insight API compatible output",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test --timeout 20000"
+    "test": "mocha test/unit --timeout 20000",
+    "test:integration": "mocha test/integration --timeout 20000"
   },
   "repository": {
     "type": "git",

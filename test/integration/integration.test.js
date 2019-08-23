@@ -7,7 +7,7 @@
 
 const assert = require('chai').assert
 
-const BB2Insight = require('../index')
+const BB2Insight = require('../../index')
 let bb2Insight
 
 const BCHJS = require('@chris.troutner/bch-js')
@@ -15,7 +15,7 @@ const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
 //const bchjs = new BCHJS({restURL: `http://decatur.hopto.org:12400/v3/`})
 
 // Open wallet file for comparing data.
-const wallet = require('./wallet.json')
+const wallet = require('../wallet.json')
 
 describe('#bb2insight', () => {
   before(() => {
