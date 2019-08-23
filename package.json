@@ -1,0 +1,30 @@
+{
+  "name": "bb2insight",
+  "version": "1.0.0",
+  "description": "A shim library that converts Blockbook data to Insight API compatible output",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christroutner/bch-api.git"
+  },
+  "keywords": [
+    "blockbook",
+    "insight",
+    "bitcoin",
+    "bitcoin",
+    "cash"
+  ],
+  "author": "Chris Troutner <chris.troutner@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/christroutner/bch-api/issues"
+  },
+  "homepage": "https://github.com/christroutner/bch-api#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0"
+  }
+}
