@@ -21,3 +21,6 @@ matches this pattern:
   "WIF": "L3qpHiUdqmWcpUgqvdKiNAmbq9m6BQGXaKTX4w2sQpZNbygdfQSk"
 }
 ```
+
+## License
+MIT

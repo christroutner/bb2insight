@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/unit --timeout 20000",
-    "test:integration": "mocha test/integration --timeout 20000"
+    "test:integration": "mocha test/integration --timeout 20000",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/christroutner/bch-api.git"
+    "url": "git+https://github.com/christroutner/bb2insight.git"
   },
   "keywords": [
     "blockbook",
@@ -26,7 +27,8 @@
   "homepage": "https://github.com/christroutner/bch-api#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.2.0"
+    "mocha": "^6.2.0",
+    "semantic-release": "^15.13.24"
   },
   "dependencies": {
     "@chris.troutner/bch-js": "^1.4.8"
