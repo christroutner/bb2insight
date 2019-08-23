@@ -12,6 +12,7 @@ const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
 const SATS_PER_BCH = 100000000
 
 class BB2Insight {
+  constructor() {}
 
   async details(cashAddr) {
     // Get raw data from Blockbook.
@@ -44,6 +45,34 @@ class BB2Insight {
 
     newData.currentPage = bbData.page - 1
     newData.pagesTotal = bbData.totalPages
+
+    return newData
+  }
+
+  async utxo(cashAddr) {
+    // Get raw data from Blockbook.
+    const bbData = await bchjs.Blockbook.utxo(cashAddr)
+    //console.log(`Blockbook original data: ${JSON.stringify(bbData,null,2)}`)
+
+    const newData = {}
+
+    newData.cashAddress = cashAddr
+    newData.legacyAddress = bchjs.Address.toLegacyAddress(newData.cashAddress)
+
+    newData.utxos = []
+    for(let i=0; i < bbData.length; i++) {
+      const bbUtxo = bbData[i]
+      const thisUtxo = {}
+
+      thisUtxo.txid = bbUtxo.txid
+      thisUtxo.vout = bbUtxo.vout
+      thisUtxo.satoshis = Number(bbUtxo.value)
+      thisUtxo.amount = thisUtxo.satoshis / SATS_PER_BCH
+      thisUtxo.height = bbUtxo.height
+      thisUtxo.confirmations = bbUtxo.confirmations
+
+      newData.utxos.push(thisUtxo)
+    }
 
     return newData
   }
