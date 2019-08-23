@@ -2,6 +2,8 @@
 This is an npm shim library that allows Blockbook API to be a drop-in replacement
 for the Insight API for the Bitcoin Cash (BCH) network.
 
+- [npm library](https://www.npmjs.com/package/bb2insight)
+
 ## Install
 `npm install`
 
