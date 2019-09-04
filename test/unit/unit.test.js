@@ -23,7 +23,7 @@ describe('#bb2insight', () => {
   })
 
   it('should execute unit tests', () => {
-    bb2Insight.hello()
+    //bb2Insight.hello()
   })
 
 })

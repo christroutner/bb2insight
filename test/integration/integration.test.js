@@ -11,7 +11,8 @@ const BB2Insight = require('../../index')
 let bb2Insight
 
 const BCHJS = require('@chris.troutner/bch-js')
-const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
+//const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
+const bchjs = new BCHJS({restURL: `http://localhost:3000/v3/`})
 //const bchjs = new BCHJS({restURL: `http://decatur.hopto.org:12400/v3/`})
 
 // Open wallet file for comparing data.

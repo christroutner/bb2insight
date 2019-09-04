@@ -9,16 +9,15 @@
 const BCHJS = require('@chris.troutner/bch-js')
 const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
 
+const scriptPubKey = require('./lib/get-scriptpubkey')
+
 const SATS_PER_BCH = 100000000
 
 class BB2Insight {
   constructor() {}
 
-  hello() {
-    console.log(`hello world`)
-  }
-
-  // Convert Blockbook.balance output to exactly match Insight details()
+  // Convert Blockbook.balance output to exactly match the Address.details()
+  // call in rest.bitcoin.com.
   async details(cashAddr) {
     // Get raw data from Blockbook.
     const bbData = await bchjs.Blockbook.balance(cashAddr)
@@ -54,7 +53,7 @@ class BB2Insight {
     return newData
   }
 
-  // Convert Blockbook utxo call to exactly match Insight utxo call.
+  // Convert Blockbook utxo call to exactly match the Address.utxo
   async utxo(cashAddr) {
     // Get raw data from Blockbook.
     const bbData = await bchjs.Blockbook.utxo(cashAddr)
@@ -64,6 +63,8 @@ class BB2Insight {
 
     newData.cashAddress = cashAddr
     newData.legacyAddress = bchjs.Address.toLegacyAddress(newData.cashAddress)
+
+    newData.scriptPubKey = scriptPubKey.getScriptPubKey(cashAddr)
 
     newData.utxos = []
     for(let i=0; i < bbData.length; i++) {
