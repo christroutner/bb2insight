@@ -107,7 +107,7 @@ class BB2Insight {
 
     // Use the bulk method for retrieving details on 20 transactions at a time.
     const txDetails = await bchjs.RawTransactions.getRawTransaction(txIds, true)
-    console.log(`txDetails: ${JSON.stringify(txDetails,null,2)}`)
+    // console.log(`txDetails: ${JSON.stringify(txDetails,null,2)}`)
 
     // Loop through each transaction to add metadata like valueIn, valueOut,
     // and fees.

@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@chris.troutner/bch-js": "^1.4.16",
-    "bchaddrjs": "^0.4.4",
+    "bchaddrjs": "christroutner/bchaddrjs",
     "bitbox-sdk": "^8.8.0"
   }
 }
