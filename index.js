@@ -47,7 +47,7 @@ class BB2Insight {
     newData.transactions = bbData.txids;
 
     newData.cashAddress = bbData.address;
-    console.log(`newData.cashAddress: ${newData.cashAddress}`);
+    // console.log(`newData.cashAddress: ${newData.cashAddress}`);
     newData.legacyAddress = bchjs.Address.toLegacyAddress(newData.cashAddress);
 
     newData.currentPage = bbData.page - 1;
@@ -163,7 +163,7 @@ class BB2Insight {
       txIds,
       true
     );
-    console.log(`txDetailsNode: ${JSON.stringify(txDetailsNode,null,2)}`)
+    // console.log(`txDetailsNode: ${JSON.stringify(txDetailsNode,null,2)}`)
 
     // Use the bulk method for retrieving details on 20 transactions at a time
     // from Blockbook.
@@ -172,11 +172,12 @@ class BB2Insight {
     // Loop through each tx detail entry and manipulate it to look like Insight.
     const newTxs = [];
     for (let i = 0; i < txDetailsBB.length; i++) {
-      const tx = txDetails[i];
+      const tx = txDetailsBB[i];
       const newTx = {};
 
       // Retrieve the full node data the corresponds to this tx.
-      //const nodeTx = txDetailsNode.filter()
+      const nodeTx = txDetailsNode.filter(x => x.txid === tx.txid)
+      // console.log(`nodeTx: ${JSON.stringify(nodeTx,null,2)}`)
 
       newTx.txid = tx.txid;
       newTx.blockhash = tx.blockHash;
@@ -189,7 +190,8 @@ class BB2Insight {
       newTx.valueIn = tx.valueIn / SATS_PER_BCH;
       newTx.valueOut = tx.value / SATS_PER_BCH;
       newTx.version = tx.version
-      // Missing: locktime, size
+      newTx.locktime = nodeTx[0].locktime
+      newTx.size = nodeTx[0].size
 
       // Convert the Blockbook Vin array to Insight API format.
       newTx.vin = [];
@@ -197,16 +199,22 @@ class BB2Insight {
         const vin = tx.vin[j];
         const vinObj = {};
 
+        // console.log(`vin: ${JSON.stringify(vin,null,2)}`)
+
+        // Get the vin data from the full node that corresponds to this one.
+        const vinNode = nodeTx[0].vin.filter(x => x.scriptSig.hex === vin.hex)
+        // console.log(`vinNode: ${JSON.stringify(vinNode,null,2)}`)
+
         vinObj.txid = vin.txid;
-        vinObj.vout = vin.vout;
+        vinObj.vout = vinNode[0].vout;
         vinObj.sequence = vin.sequence;
         vinObj.n = vin.n;
         vinObj.addr = vin.addresses[0];
         vinObj.valueSat = Number(vin.value);
         vinObj.value = Number(vin.value) / SATS_PER_BCH;
         vinObj.scriptSig = {
-          hex: vin.hex,
-          asm: "" // TODO: Add assembly using BITBOX.
+          hex: vinNode[0].scriptSig.hex,
+          asm: vinNode[0].scriptSig.asm
         };
         vinObj.doubleSpentTxID = null;
 
@@ -219,13 +227,17 @@ class BB2Insight {
         const vout = tx.vout[j];
         const voutObj = {};
 
-        voutObj.value = Number(vout.value) / SATS_PER_BCH;
+        // Get the vin data from the full node that corresponds to this one.
+        const voutNode = nodeTx[0].vout.filter(x => x.n === vout.n)
+        // console.log(`voutNode: ${JSON.stringify(voutNode,null,2)}`)
+
+        voutObj.value = (Number(vout.value) / SATS_PER_BCH).toString();
         voutObj.n = vout.n;
         voutObj.scriptPubKey = {
-          hex: vout.hex,
-          asm: "", // TODO: Add assembly using BITBOX.
-          addresses: vout.addresses,
-          type: "" // TODO: add script type.
+          hex: voutNode[0].scriptPubKey.hex,
+          asm: voutNode[0].scriptPubKey.asm,
+          addresses: voutNode[0].scriptPubKey.addresses,
+          type: voutNode[0].scriptPubKey.type
         };
         // Missing: spentTxId, spentIndex, spentHeight
 
