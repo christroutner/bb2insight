@@ -4,84 +4,254 @@
   https://gist.github.com/christroutner/ff1af0ee4f5a207571fe7857acdc916e
 */
 
-'use strict'
+"use strict";
 
-const BCHJS = require('@chris.troutner/bch-js')
-const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
+const BCHJS = require("@chris.troutner/bch-js");
+//const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
+// const bchjs = new BCHJS({restURL: `http://localhost:3000/v3/`})
+const bchjs = new BCHJS();
 
-const SATS_PER_BCH = 100000000
+const scriptPubKey = require("./lib/get-scriptpubkey");
+
+const SATS_PER_BCH = 100000000;
 
 class BB2Insight {
   constructor() {}
 
-  hello() {
-    console.log(`hello world`)
-  }
-
-  // Convert Blockbook.balance output to exactly match Insight details()
+  // Convert Blockbook.balance output to exactly match the Address.details()
+  // call in rest.bitcoin.com.
   async details(cashAddr) {
     // Get raw data from Blockbook.
-    const bbData = await bchjs.Blockbook.balance(cashAddr)
-    //console.log(`Blockbook original data: ${JSON.stringify(bbData,null,2)}`)
+    const bbData = await bchjs.Blockbook.balance(cashAddr);
+    // console.log(`Blockbook original data: ${JSON.stringify(bbData,null,2)}`)
 
-    const newData = {}
+    const newData = {};
 
     // Manipulate data to match Insight API format.
-    newData.balanceSat = Number(bbData.balance)
-    newData.balance = newData.balanceSat / SATS_PER_BCH
+    newData.balanceSat = Number(bbData.balance);
+    newData.balance = newData.balanceSat / SATS_PER_BCH;
 
-    newData.totalReceivedSat = Number(bbData.totalReceived)
-    newData.totalReceived = newData.totalReceivedSat / SATS_PER_BCH
+    newData.totalReceivedSat = Number(bbData.totalReceived);
+    newData.totalReceived = newData.totalReceivedSat / SATS_PER_BCH;
 
-    newData.totalSentSat = Number(bbData.totalSent)
-    newData.totalSent = newData.totalSentSat / SATS_PER_BCH
+    newData.totalSentSat = Number(bbData.totalSent);
+    newData.totalSent = newData.totalSentSat / SATS_PER_BCH;
 
-    newData.unconfirmedBalanceSat = Number(bbData.unconfirmedBalance)
-    newData.unconfirmedBalance = newData.unconfirmedBalanceSat / SATS_PER_BCH
+    newData.unconfirmedBalanceSat = Number(bbData.unconfirmedBalance);
+    newData.unconfirmedBalance = newData.unconfirmedBalanceSat / SATS_PER_BCH;
 
-    newData.unconfirmedTxApperances = bbData.unconfirmedTxs
+    newData.unconfirmedTxApperances = bbData.unconfirmedTxs;
 
-    newData.txApperances = bbData.txs
+    newData.txApperances = bbData.txs;
 
-    newData.transactions = bbData.txids
+    newData.transactions = bbData.txids;
 
-    newData.cashAddress = bbData.address
-    newData.legacyAddress = bchjs.Address.toLegacyAddress(newData.cashAddress)
+    newData.cashAddress = bbData.address;
+    // console.log(`newData.cashAddress: ${newData.cashAddress}`);
+    newData.legacyAddress = bchjs.Address.toLegacyAddress(newData.cashAddress);
 
-    newData.currentPage = bbData.page - 1
-    newData.pagesTotal = bbData.totalPages
+    newData.currentPage = bbData.page - 1;
+    newData.pagesTotal = bbData.totalPages;
 
-    return newData
+    return newData;
   }
 
-  // Convert Blockbook utxo call to exactly match Insight utxo call.
+  // Convert Blockbook utxo call to exactly match the Address.utxo
   async utxo(cashAddr) {
     // Get raw data from Blockbook.
-    const bbData = await bchjs.Blockbook.utxo(cashAddr)
-    //console.log(`Blockbook original data: ${JSON.stringify(bbData,null,2)}`)
+    const bbData = await bchjs.Blockbook.utxo(cashAddr);
+    // console.log(`Blockbook original data: ${JSON.stringify(bbData,null,2)}`)
 
-    const newData = {}
+    const newData = {};
 
-    newData.cashAddress = cashAddr
-    newData.legacyAddress = bchjs.Address.toLegacyAddress(newData.cashAddress)
+    newData.cashAddress = cashAddr;
+    newData.legacyAddress = bchjs.Address.toLegacyAddress(newData.cashAddress);
 
-    newData.utxos = []
-    for(let i=0; i < bbData.length; i++) {
-      const bbUtxo = bbData[i]
-      const thisUtxo = {}
+    newData.scriptPubKey = scriptPubKey.getScriptPubKey(cashAddr);
 
-      thisUtxo.txid = bbUtxo.txid
-      thisUtxo.vout = bbUtxo.vout
-      thisUtxo.satoshis = Number(bbUtxo.value)
-      thisUtxo.amount = thisUtxo.satoshis / SATS_PER_BCH
-      thisUtxo.height = bbUtxo.height
-      thisUtxo.confirmations = bbUtxo.confirmations
+    newData.utxos = [];
+    for (let i = 0; i < bbData.length; i++) {
+      const bbUtxo = bbData[i];
+      const thisUtxo = {};
 
-      newData.utxos.push(thisUtxo)
+      thisUtxo.txid = bbUtxo.txid;
+      thisUtxo.vout = bbUtxo.vout;
+      thisUtxo.satoshis = Number(bbUtxo.value);
+      thisUtxo.amount = thisUtxo.satoshis / SATS_PER_BCH;
+      thisUtxo.height = bbUtxo.height;
+      thisUtxo.confirmations = bbUtxo.confirmations;
+
+      newData.utxos.push(thisUtxo);
     }
 
-    return newData
+    return newData;
+  }
+
+  // Older, deprecated version of the transactions endpoint.
+  async transactions(cashAddr) {
+    // Get address details
+    const addrDetails = await this.details(cashAddr);
+    // console.log(`addrDetails: ${JSON.stringify(addrDetails,null,2)}`)
+
+    // Scaffold the output object.
+    const outObj = {
+      cashAddress: addrDetails.cashAddress,
+      legacyAddress: addrDetails.legacyAddress,
+      pagesTotal: addrDetails.pagesTotal,
+      curentPage: addrDetails.currentPage
+    };
+
+    // Combine tx details into an array.
+    const txIds = addrDetails.transactions;
+
+    // TODO add some code here to break up the txIds array into 20 element chunks.
+    // Need to add test cases for this corner case.
+
+    // Use the bulk method for retrieving details on 20 transactions at a time.
+    const txDetails = await bchjs.RawTransactions.getRawTransaction(
+      txIds,
+      true
+    );
+    // console.log(`txDetails: ${JSON.stringify(txDetails,null,2)}`)
+
+    // Loop through each transaction to add metadata like valueIn, valueOut,
+    // and fees.
+    for (let i = 0; i < txDetails.length; i++) {
+      const thisTx = txDetails[i];
+
+      // Get the total value output in the transaction (in BCH).
+      let valueOut = 0;
+      thisTx.vout.map(vout => (valueOut += vout.value));
+      thisTx.valueOut = valueOut;
+
+      // TODO: Add valueIn and fees for each tx.
+      // Research the blockbook API first though:
+      // https://github.com/trezor/blockbook/blob/master/docs/api.md#get-transaction
+    }
+
+    // Add the TX details to the output object.
+    outObj.txs = txDetails;
+
+    return outObj;
+  }
+
+  // Gets TX details from Blockbook the the full node. Combine them into a format
+  // that resembles the Insight /address/transactions/:address endpoint as
+  // closely as possible.
+  async transactions2(cashAddr) {
+    // Get address details
+    const addrDetails = await this.details(cashAddr);
+    // console.log(`addrDetails: ${JSON.stringify(addrDetails,null,2)}`)
+
+    // Scaffold the output object.
+    const outObj = {
+      cashAddress: addrDetails.cashAddress,
+      legacyAddress: addrDetails.legacyAddress,
+      pagesTotal: addrDetails.pagesTotal,
+      currentPage: addrDetails.currentPage
+    };
+
+    // Combine tx details into an array.
+    const txIds = addrDetails.transactions;
+
+    // TODO add some code here to break up the txIds array into 20 element chunks.
+    // Need to add test cases for this corner case.
+
+    // Use the bulk method for retrieving details on 20 transactions at a time
+    // from the Full Node.
+    const txDetailsNode = await bchjs.RawTransactions.getRawTransaction(
+      txIds,
+      true
+    );
+    // console.log(`txDetailsNode: ${JSON.stringify(txDetailsNode,null,2)}`)
+
+    // Use the bulk method for retrieving details on 20 transactions at a time
+    // from Blockbook.
+    const txDetailsBB = await bchjs.Blockbook.tx(txIds);
+    // console.log(`txDetailsBB: ${JSON.stringify(txDetailsBB,null,2)}`)
+
+    // Loop through each tx detail entry and manipulate it to look like Insight.
+    const newTxs = [];
+    for (let i = 0; i < txDetailsBB.length; i++) {
+      const tx = txDetailsBB[i];
+      const newTx = {};
+
+      // Retrieve the full node data the corresponds to this tx.
+      const nodeTx = txDetailsNode.filter(x => x.txid === tx.txid)
+      // console.log(`nodeTx: ${JSON.stringify(nodeTx,null,2)}`)
+
+      newTx.txid = tx.txid;
+      newTx.blockhash = tx.blockHash;
+      newTx.blockheight = tx.blockHeight;
+      newTx.blocktime = tx.blockTime;
+      newTx.time = tx.blockTime;
+      newTx.confirmations = tx.confirmations;
+      newTx.fees = tx.fees / SATS_PER_BCH;
+      // newTx.value = tx.value / SATS_PER_BCH;
+      newTx.valueIn = tx.valueIn / SATS_PER_BCH;
+      newTx.valueOut = tx.value / SATS_PER_BCH;
+      newTx.version = tx.version
+      newTx.locktime = nodeTx[0].locktime
+      newTx.size = nodeTx[0].size
+
+      // Convert the Blockbook Vin array to Insight API format.
+      newTx.vin = [];
+      for (let j = 0; j < tx.vin.length; j++) {
+        const vin = tx.vin[j];
+        const vinObj = {};
+
+        // console.log(`vin: ${JSON.stringify(vin,null,2)}`)
+
+        // Get the vin data from the full node that corresponds to this one.
+        const vinNode = nodeTx[0].vin.filter(x => x.scriptSig.hex === vin.hex)
+        // console.log(`vinNode: ${JSON.stringify(vinNode,null,2)}`)
+
+        vinObj.txid = vin.txid;
+        vinObj.vout = vinNode[0].vout;
+        vinObj.sequence = vin.sequence;
+        vinObj.n = vin.n;
+        vinObj.addr = vin.addresses[0];
+        vinObj.valueSat = Number(vin.value);
+        vinObj.value = Number(vin.value) / SATS_PER_BCH;
+        vinObj.scriptSig = {
+          hex: vinNode[0].scriptSig.hex,
+          asm: vinNode[0].scriptSig.asm
+        };
+        vinObj.doubleSpentTxID = null;
+
+        newTx.vin.push(vinObj);
+      }
+
+      // Convert the Blockbook Vout array to Insight API format.
+      newTx.vout = [];
+      for (let j = 0; j < tx.vout.length; j++) {
+        const vout = tx.vout[j];
+        const voutObj = {};
+
+        // Get the vin data from the full node that corresponds to this one.
+        const voutNode = nodeTx[0].vout.filter(x => x.n === vout.n)
+        // console.log(`voutNode: ${JSON.stringify(voutNode,null,2)}`)
+
+        voutObj.value = (Number(vout.value) / SATS_PER_BCH).toString();
+        voutObj.n = vout.n;
+        voutObj.scriptPubKey = {
+          hex: voutNode[0].scriptPubKey.hex,
+          asm: voutNode[0].scriptPubKey.asm,
+          addresses: voutNode[0].scriptPubKey.addresses,
+          type: voutNode[0].scriptPubKey.type
+        };
+        // Missing: spentTxId, spentIndex, spentHeight
+
+        newTx.vout.push(voutObj);
+      }
+
+      newTxs.push(newTx);
+    }
+
+    outObj.txs = newTxs;
+
+    return outObj;
   }
 }
 
-module.exports = BB2Insight
+module.exports = BB2Insight;
