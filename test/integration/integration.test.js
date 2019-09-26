@@ -15,10 +15,6 @@ const bchjs = new BCHJS()
 // const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
 //const bchjs = new BCHJS({restURL: `http://localhost:3000/v3/`})
 
-// Open wallet file for comparing data.
-const wallet = require('../wallet.json')
-//console.log(`wallet: ${JSON.stringify(wallet,null,2)}`)
-
 const insightMocks = require('../mocks/insight-mocks')
 
 describe('#bb2insight', () => {
