@@ -31,7 +31,7 @@
     "semantic-release": "^15.13.24"
   },
   "dependencies": {
-    "@chris.troutner/bch-js": "^1.4.16",
+    "@chris.troutner/bch-js": "^1.4.21",
     "bchaddrjs": "christroutner/bchaddrjs",
     "bitbox-sdk": "^8.8.0"
   }

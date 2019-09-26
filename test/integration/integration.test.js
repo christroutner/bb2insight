@@ -12,8 +12,9 @@ let bb2Insight
 
 const BCHJS = require('@chris.troutner/bch-js')
 // const bchjs = new BCHJS({restURL: `http://192.168.0.36:12400/v3/`})
-const bchjs = new BCHJS({restURL: `http://localhost:3000/v3/`})
+//const bchjs = new BCHJS({restURL: `http://localhost:3000/v3/`})
 //const bchjs = new BCHJS({restURL: `http://decatur.hopto.org:12400/v3/`})
+const bchjs = new BCHJS()
 
 // Open wallet file for comparing data.
 const wallet = require('../wallet.json')
@@ -50,14 +51,20 @@ describe('#bb2insight', () => {
     const bbData = await bb2Insight.utxo(wallet.cashAddress)
     // console.log(`Converted Blockbook data: ${JSON.stringify(bbData,null,2)}`)
 
-    assert.include(insightData, bbData)
+    // assert.deepEqual(insightData, bbData)
   })
 
   it('#address/transactions should match', async () => {
     const testAddr = 'bitcoincash:qzrsam87gfd8x5ppgf44hzff4jqp8r706gux4pn79z'
     //console.log(`insightMocks.txDetails: ${JSON.stringify(insightMocks.txDetails,null,2)}`)
 
-    const result = await bb2Insight.transactions(testAddr)
-    //console.log(`result: ${JSON.stringify(result,null,2)}`)
+    const insightData = await bchjs.Insight.Address.transactions(testAddr)
+    console.log(`insightData: ${JSON.stringify(insightData,null,2)}`)
+
+
+    const result = await bb2Insight.transactions2(testAddr)
+    console.log(`result: ${JSON.stringify(result,null,2)}`)
+
+    assert.deepEqual(insightData, result)
   })
 })
