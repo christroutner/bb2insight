@@ -28,7 +28,9 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
-    "semantic-release": "^15.13.24"
+    "nock": "^11.3.5",
+    "semantic-release": "^15.13.24",
+    "sinon": "^7.5.0"
   },
   "dependencies": {
     "@chris.troutner/bch-js": "^1.4.21",

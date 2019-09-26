@@ -60,7 +60,7 @@ class BB2Insight {
   async utxo(cashAddr) {
     // Get raw data from Blockbook.
     const bbData = await bchjs.Blockbook.utxo(cashAddr);
-    //console.log(`Blockbook original data: ${JSON.stringify(bbData,null,2)}`)
+    // console.log(`Blockbook original data: ${JSON.stringify(bbData,null,2)}`)
 
     const newData = {};
 
@@ -168,6 +168,7 @@ class BB2Insight {
     // Use the bulk method for retrieving details on 20 transactions at a time
     // from Blockbook.
     const txDetailsBB = await bchjs.Blockbook.tx(txIds);
+    // console.log(`txDetailsBB: ${JSON.stringify(txDetailsBB,null,2)}`)
 
     // Loop through each tx detail entry and manipulate it to look like Insight.
     const newTxs = [];

@@ -1,7 +1,62 @@
 /*
+
  */
 
 "use strict";
+
+const addrDetails = {
+  balance: 0.00015,
+  balanceSat: 15000,
+  totalReceived: 0.00015,
+  totalReceivedSat: 15000,
+  totalSent: 0,
+  totalSentSat: 0,
+  unconfirmedBalance: 0,
+  unconfirmedBalanceSat: 0,
+  unconfirmedTxApperances: 0,
+  txApperances: 3,
+  transactions: [
+    "75f7da9402f7211a6a5f8c96ce3a64e7606e8f6be42c2857dfa1e414a4e91863",
+    "f62966d97bb4e556b74b20363a1d6aa52b95073242a083291f2aa94fdee3752f",
+    "d6d826222bd08a6a6557b6231b51c2c7099270c7520f592d184cd5c4a0027d1e"
+  ],
+  legacyAddress: "1Ki5AMDetWvxVE4PiBXQiRsw7KTXsR7Usi",
+  cashAddress: "bitcoincash:qrxndjkg00x2v824xws0my37y8he2fl6xs77st28yx",
+  currentPage: 0,
+  pagesTotal: 1
+};
+
+const utxoDetails = {
+  utxos: [
+    {
+      txid: "75f7da9402f7211a6a5f8c96ce3a64e7606e8f6be42c2857dfa1e414a4e91863",
+      vout: 0,
+      amount: 0.00003,
+      satoshis: 3000,
+      height: 597083,
+      confirmations: 4914
+    },
+    {
+      txid: "f62966d97bb4e556b74b20363a1d6aa52b95073242a083291f2aa94fdee3752f",
+      vout: 0,
+      amount: 0.00005,
+      satoshis: 5000,
+      height: 597082,
+      confirmations: 4915
+    },
+    {
+      txid: "d6d826222bd08a6a6557b6231b51c2c7099270c7520f592d184cd5c4a0027d1e",
+      vout: 0,
+      amount: 0.00007,
+      satoshis: 7000,
+      height: 597082,
+      confirmations: 4915
+    }
+  ],
+  legacyAddress: "1Ki5AMDetWvxVE4PiBXQiRsw7KTXsR7Usi",
+  cashAddress: "bitcoincash:qrxndjkg00x2v824xws0my37y8he2fl6xs77st28yx",
+  scriptPubKey: "76a914cd36cac87bcca61d5533a0fd923e21ef9527fa3488ac"
+};
 
 const txDetails = {
   pagesTotal: 1,
@@ -158,7 +213,8 @@ const txDetails = {
   currentPage: 0
 };
 
-
 module.exports = {
+  addrDetails,
+  utxoDetails,
   txDetails
-}
+};
