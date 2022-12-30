@@ -27,7 +27,7 @@
   "homepage": "https://github.com/christroutner/bch-api#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "nock": "^11.3.5",
     "semantic-release": "^15.13.24",
     "sinon": "^7.5.0"
